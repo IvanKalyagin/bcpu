@@ -36,7 +36,7 @@ import taiga_config::*, riscv_types::*, taiga_types::*;
 
     initial register_file <= '{default: 0};
     always_ff @ (posedge clk) begin 
-        if (wr_en & rd_addr != '0) // нужна ли проверка
+        if (wr_en)
             register_file[thread_rd_id, rd_addr] <= new_data; //thread timer 0 , 32, 64, 96
     end
     always_ff @ (posedge clk) begin

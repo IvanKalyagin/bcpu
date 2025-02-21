@@ -12,8 +12,8 @@ module alu (
     input logic rs1_en,
     input logic rs2_en,
     input logic rd_en,
-    output logic[XLEN-1:0] rs1_data,
-    output logic[XLEN-1:0] rs2_data,
+    input logic[XLEN-1:0] rs1_data,
+    input logic[XLEN-1:0] rs2_data,
     input rs_addr_t rd_addr,
 
     output logic rd_en_o,
