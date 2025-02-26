@@ -87,7 +87,7 @@ always_comb begin
         5'b11011 : begin // JAL
             uses_rd   = 1'b1;
             jal_req   = 1'b1;
-            curr_data = {12'b0, signed'(pc2decode[31, 19:12, 20, 30:21])}; // TODO ?????? signed
+            curr_data = {signed'(pc2decode[31, 19:12, 20, 30:21])}; 
             alu_logic_op = ALU_LOGIC_ADD;
         end
 
@@ -95,7 +95,7 @@ always_comb begin
             uses_rd   = 1'b1;
             uses_rs1  = 1'b1;
             jalr_req  = 1'b1;
-            curr_data = {20'b0, signed'(pc2decode[31:20])};
+            curr_data = {signed'(pc2decode[31:20])};
             alu_logic_op = ALU_LOGIC_ADD;
         end
 
@@ -119,7 +119,7 @@ always_comb begin
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
                     curr_data = {20'b0, pc2decode[31, 7, 30:25, 11:8]};
-                    alu_logic_op = ALU_LOGIC_ADD; // TODO XOR?
+                    alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
 
@@ -134,7 +134,7 @@ always_comb begin
                 3'b100 : begin // BLT
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {20'b0, signed'(pc2decode[31, 7, 30:25, 11:8])};
+                    curr_data = {signed'(pc2decode[31, 7, 30:25, 11:8])};
                     alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
@@ -142,7 +142,7 @@ always_comb begin
                 3'b101 : begin // BGE
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {20'b0, signed'(pc2decode[31, 7, 30:25, 11:8])};
+                    curr_data = {signed'(pc2decode[31, 7, 30:25, 11:8])};
                     alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
@@ -173,14 +173,14 @@ always_comb begin
                 3'b000 : begin // ADDI
                     uses_rs1 = 1'b1;
                     uses_rd  = 1'b1;
-                    curr_data = {20'b0, signed'(pc2decode[31:20])};
+                    curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
                 end
 
                 3'b010 : begin //   SLTI
                     uses_rs1 = 1'b1;
                     uses_rd  = 1'b1;
-                    curr_data = {20'b0, signed'(pc2decode[31:20])};
+                    curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
@@ -196,21 +196,21 @@ always_comb begin
                 3'b100 : begin //   XORI
                     uses_rs1 = 1'b1;
                     uses_rd  = 1'b1;
-                    curr_data = {20'b0, signed'(pc2decode[31:20])};
+                    curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_XOR;
                 end
 
                 3'b110 : begin //   ORI
                     uses_rs1 = 1'b1;
                     uses_rd  = 1'b1;
-                    curr_data = {20'b0, signed'(pc2decode[31:20])};
+                    curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_OR;
                 end
 
                 3'b111 : begin //   ANDI
                     uses_rs1 = 1'b1;
                     uses_rd  = 1'b1;
-                    curr_data = {20'b0, signed'(pc2decode[31:20])};
+                    curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_AND;
                 end
 
@@ -357,7 +357,7 @@ always_ff @(posedge clk) begin
     logic_op_o <= logic_op;
     sra_cmd_o <= fn5[3];
 
-    illegal_inst_o <= !illegal_inst && &pc2decode[1:0]; // TODO можно ли так
+    illegal_inst_o <= !illegal_inst && &pc2decode[1:0];
 end
 
 always_ff @(posedge clk) begin
