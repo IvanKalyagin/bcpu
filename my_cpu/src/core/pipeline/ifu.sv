@@ -3,11 +3,12 @@
     Instruction Fetch Unit
 */
 
-// import taiga_config::*;
-import riscv_types::*;
-// import taiga_types::*;
 
-module ifu(
+module ifu
+    import cpu_config::*;
+    import riscv_types::*;
+    import cpu_types::*;
+    (
     input logic rst,
     input logic clk,
 
@@ -18,7 +19,7 @@ module ifu(
 
     // From exu
     // input logic new_pc_req[3],  // Нужно ли
-    input logic[28:0] new_pc[3],
+    input logic[28:0] new_pc,
 
     output logic[XLEN-1:0] pc2mem,
     output logic[XLEN-1:0] pc2decode,
@@ -36,7 +37,7 @@ always @(posedge clk) begin
     if (rst) begin
         pc2mem <= {thread_timer, 30'h0000200}; //reset vector
     end else begin
-        pc2mem <= {thread_timer, new_pc[thread_timer], 2'b00};
+        pc2mem <= {thread_timer, new_pc, 2'b00};
     end
 end
 

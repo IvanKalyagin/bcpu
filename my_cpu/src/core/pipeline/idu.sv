@@ -1,6 +1,11 @@
 // Decode module
 
-module idu(
+
+module idu
+    import cpu_config::*;
+    import riscv_types::*;
+    import cpu_types::*;
+    (
     input logic rst,
     input logic clk,
 
@@ -21,8 +26,10 @@ module idu(
     output logic jal_req_o,
     output logic jalr_req_o,
     output logic b_req_o,
-    output logic lui_req_o;
-    output logic auipc_req_o;
+    output logic lui_req_o,
+    output logic auipc_req_o,
+    output logic l_req_o,
+    output logic s_req_o,
     
     output logic [2:0] cmd_o,
     output alu_logic_op_t alu_logic_op_o,
@@ -54,6 +61,8 @@ logic j_req;
 logic b_req;
 logic lui_req;
 logic auipc_req;
+logic l_req;
+logic s_req;
 
 logic illegal_inst;
 
@@ -79,6 +88,8 @@ always_comb begin
     jalr_req = 1'b0;
     lui_req = 1'b0;
     auipc_req = 1'b0;
+    s_req = 1'b0;
+    l_req = 1'b0;
     sub = 1'b0;
     logic_op = 1'b0;
     illegal_inst = 1'b0;
@@ -327,10 +338,80 @@ always_comb begin
             endcase
         end
 
+        5'b00000 : begin // LOAD
+            l_req   = 1'b1;
+            case (fn3)
+                3'b000 : begin // LB
+                    uses_rs1 = 1'b1;
+                    uses_rd  = 1'b1;
+                    curr_data = {signed'(pc2decode[31:20])};
+                    alu_logic_op = ALU_LOGIC_ADD;
+                end
+
+                3'b001 : begin // LH
+                    uses_rs1 = 1'b1;
+                    uses_rd  = 1'b1;
+                    curr_data = {signed'(pc2decode[31:20])};
+                    alu_logic_op = ALU_LOGIC_ADD;
+                end
+
+                3'b010 : begin // LW
+                    uses_rs1 = 1'b1;
+                    uses_rd  = 1'b1;
+                    curr_data = {signed'(pc2decode[31:20])};
+                    alu_logic_op = ALU_LOGIC_ADD;
+                end
+
+                3'b100 : begin // LBU
+                    uses_rs1 = 1'b1;
+                    uses_rd  = 1'b1;
+                    curr_data = {signed'(pc2decode[31:20])};
+                    alu_logic_op = ALU_LOGIC_ADD;
+                end
+
+                3'b101 : begin // LHU
+                    uses_rs1 = 1'b1;
+                    uses_rd  = 1'b1;
+                    curr_data = {signed'(pc2decode[31:20])};
+                    alu_logic_op = ALU_LOGIC_ADD;
+                end
+
+                default : illegal_inst = 1'b1;
+            endcase
+        end
+
+        'b01000 : begin // STORE    
+            s_req   = 1'b1;
+            case (fn3)
+                3'b000 : begin // SB
+                    uses_rs1 = 1'b1;
+                    uses_rs2  = 1'b1;
+                    curr_data = {signed'(pc2decode[31:25], pc2decode[11:7])};
+                    alu_logic_op = ALU_LOGIC_ADD;
+                end
+
+                3'b001 : begin // SH
+                    uses_rs1 = 1'b1;
+                    uses_rs2  = 1'b1;
+                    curr_data = {signed'(pc2decode[31:25], pc2decode[11:7])};
+                    alu_logic_op = ALU_LOGIC_ADD;
+                end
+
+                3'b010 : begin // SW
+                    uses_rs1 = 1'b1;
+                    uses_rs2  = 1'b1;
+                    curr_data = {signed'(pc2decode[31:25], pc2decode[11:7])};
+                    alu_logic_op = ALU_LOGIC_ADD;
+                end
+
+                default : illegal_inst = 1'b1;
+            endcase
+        end
+
         default : illegal_inst = 1'b1;
     endcase
 
-    //TODO add CSR and LS instructions
+    //TODO add CSR instructions
     // Also mei and others from RV32I
 end
 
@@ -348,6 +429,8 @@ always_ff @(posedge clk) begin
     b_req_o     <= b_req;
     lui_req_o   <= lui_req;
     auipc_req_o <= auipc_req;
+    l_req_o <= l_req;
+    s_req_o <= s_req;
 
     data_o <= curr_data;
 

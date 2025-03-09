@@ -1,6 +1,6 @@
 
 
-module iram  
+module dram  
     import cpu_config::*;
     import riscv_types::*;
     import cpu_types::*;
@@ -9,7 +9,10 @@ module iram
         input logic rst,
 
         input logic[XLEN-1:0] addr_a,
-        input logic en_a,
+        input logic load,
+        input logic store,
+        input logic [XLEN-1:0] data_in,
+
         output logic [XLEN-1:0] data_out_a
     );
 
@@ -17,8 +20,11 @@ module iram
     initial tag_entry = '{default: 0};
 
     always_ff @ (posedge clk) begin
-        if (en_a) begin
+        if (load) begin
             data_out_a <= tag_entry[addr_a];
+        end
+        if (store) begin
+            tag_entry[addr_a] <= data_in;
         end
     end
 

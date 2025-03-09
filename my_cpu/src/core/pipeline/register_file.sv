@@ -1,6 +1,9 @@
 
 module register_file
-import taiga_config::*, riscv_types::*, taiga_types::*;
+
+import cpu_config::*;
+import riscv_types::*;
+import cpu_types::*;
     (
         input logic clk,
         input logic rst,
@@ -43,7 +46,7 @@ import taiga_config::*, riscv_types::*, taiga_types::*;
         if (rs1_en)
             rs1_data <= register_file[thread_rs_id, rs1_addr];
         if (rs2_en)
-            rs2_data <= register_file[thread_rs_id, rs1_addr];
+            rs2_data <= register_file[thread_rs_id, rs2_addr];
     end
 
     ////////////////////////////////////////////////////

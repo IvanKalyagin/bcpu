@@ -1,8 +1,11 @@
-// import taiga_config::*;
-import riscv_types::*;
-// import taiga_types::*;
 
-module wb (
+// Write back module
+
+module wb
+    import cpu_config::*;
+    import riscv_types::*;
+    import cpu_types::*;
+    (
     input   logic           rst,
     input   logic           clk,
 
@@ -13,6 +16,7 @@ module wb (
     input logic lsu_res_en,
 
     input rs_addr_t rd_addr,
+    input logic rd_en,
 
     output rs_addr_t rd_addr_o,
 
@@ -28,6 +32,7 @@ module wb (
 // assign new_pc = curr_pc;
 
 always_comb begin
+    res_en = rd_en;
     if (alu_res_en) begin
         result <= alu_res;
         rd_addr_o <= rd_addr;
