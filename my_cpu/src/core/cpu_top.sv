@@ -6,12 +6,13 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         input logic rst,
 
         input logic[XLEN-1:0] pc_data,
-        output logic[XLEN-1:0] pc_addr,
+        output logic[ADDR_LEN-1:0] pc_addr,
 
-        output logic[XLEN-1:0] dram_addr, // TODO надо ли
+        output logic[ADDR_LEN-1:0] dram_addr,
         output logic[XLEN-1:0] dram_data_out,
         input logic[XLEN-1:0] dram_data_in
 
+            // TODO load store support
         );
 
     logic [1:0] thread_timer_data;
@@ -20,9 +21,9 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
     logic [1:0] thread_wb_id;
 
     // IFU
-    logic[28:0] new_pc;
+    logic[ADDR_LEN-3:0] new_pc;
     logic[XLEN-1:0] pc2decode;
-    logic[XLEN-1:0] curr_pc;
+    logic[ADDR_LEN-3:0] curr_pc;
 
     // IDU
     logic rs1_en;
@@ -46,7 +47,7 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
     logic sub_o;
     logic sra_cmd_o;
 
-    logic[XLEN-1:0] curr_pc_o;
+    logic[ADDR_LEN-3:0] curr_pc_o;
 
     logic[XLEN-1:0] data_o;
 
@@ -54,7 +55,7 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
 
     // ALU
     logic[XLEN-1:0] rs1_data;
-    logic[XLEN-1:0] rs2_data
+    logic[XLEN-1:0] rs2_data;
 
     logic rd_en_o;
     rs_addr_t rd_addr_o;
@@ -144,29 +145,29 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .rd_en(rd_en),
         .rs1_data(rs1_data),
         .rs2_data(rs2_data),
-        .rd_en(rd_en),
+        .rd_addr(rd_addr),
 
-        .jal_req_o(jal_req_o),
-        .jalr_req_o(jalr_req_o),
-        .b_req_o(b_req_o),
-        .lui_req_o(lui_req_o),
-        .auipc_req_o(auipc_req_o),
-        .l_req_o(l_req_o),
-        .s_req_o(s_req_o),
+        .jal_req(jal_req_o),
+        .jalr_req(jalr_req_o),
+        .b_req(b_req_o),
+        .lui_req(lui_req_o),
+        .auipc_req(auipc_req_o),
+        .l_req(l_req_o),
+        .s_req(s_req_o),
         
-        .cmd_o(cmd_o),
-        .alu_logic_op_o(alu_logic_op_o),
-        .logic_op_o(logic_op_o),
-        .sub_o(sub_o),
-        .sra_cmd_o(sra_cmd_o),
+        .cmd(cmd_o),
+        .alu_logic_op(alu_logic_op_o),
+        .logic_op(logic_op_o),
+        .sub(sub_o),
+        .sra_cmd(sra_cmd_o),
 
-        .curr_pc_o(curr_pc_o),
+        .curr_pc(curr_pc_o),
 
-        .data_o(data_o),
+        .data(data_o),
 
         .thread_exu_id(thread_exu_id),
 
-        .illegal_inst_o(illegal_inst_o),
+        .illegal_inst(illegal_inst_o),
 
         .rd_en_o(rd_en_o),
         .rd_addr_o(rd_addr_o),
@@ -176,6 +177,8 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .lsu_res_en(lsu_res_en), 
 
         .thread_exu_id_out(thread_wb_id),
+
+        .result(dram_data_out),
 
         // New pc
         .new_pc(new_pc)

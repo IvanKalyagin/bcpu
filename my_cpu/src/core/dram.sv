@@ -8,7 +8,7 @@ module dram
         input logic clk,
         input logic rst,
 
-        input logic[XLEN-1:0] addr_a,
+        input logic[ADDR_LEN-1:0] addr_a,
         input logic load,
         input logic store,
         input logic [XLEN-1:0] data_in,
@@ -17,7 +17,7 @@ module dram
     );
 
     (* ram_style = "block", ramstyle = "no_rw_check" *) logic  [XLEN-1:0] tag_entry [LINES];
-    initial tag_entry = '{default: 0};
+    // initial tag_entry = '{default: 0};
 
     always_ff @ (posedge clk) begin
         if (load) begin

@@ -21,8 +21,8 @@ module alu
     input logic jal_req,
     input logic jalr_req,
     input logic b_req,
-    input logic lui_req;
-    input logic auipc_req;
+    input logic lui_req,
+    input logic auipc_req,
     input logic l_req,
     input logic s_req,
     
@@ -32,7 +32,7 @@ module alu
     input logic sub,
     input logic sra_cmd, 
 
-    input logic[XLEN-1:0] curr_pc,
+    input logic[ADDR_LEN-3:0] curr_pc,
 
     input logic[XLEN-1:0] data,
 
@@ -49,8 +49,10 @@ module alu
 
     output logic [1:0] thread_exu_id_out,
 
+    output logic[XLEN-1:0] result,
+
     // New pc
-    output logic[28:0] new_pc
+    output logic[ADDR_LEN-3:0] new_pc
 );
     logic[XLEN:0] add_sub_result;
     logic add_sub_carry_in;
@@ -59,16 +61,20 @@ module alu
     logic[XLEN:0] adder_in1;
     logic[XLEN:0] adder_in2;
 
-    logic[XLEN-1:0] result;
 
-    logic[XLEN-1:0] inc_pc;
+    logic[ADDR_LEN-3:0] inc_pc;
+
+    logic main_sum_pos_ovflw;
+    logic main_sum_neg_ovflw;
+    logic main_sum_flag_c;
+    logic main_sum_flag_z;
+    logic main_sum_flag_s;
+    logic main_sum_flag_o;
 
     alu_inputs_t alu_inputs;
 
     //implementation
     ////////////////////////////////////////////////////
-
-    assign rd_en_o = rd_en;
 
     always_comb begin
         if (rs1_en)
@@ -124,7 +130,7 @@ module alu
 
                 3'b101 : begin // SR
                     if (sra_cmd) begin
-                        result = alu_inputs.in1 >>$ alu_inputs.in2;
+                        result = alu_inputs.in1 >> alu_inputs.in2;
                     end else begin
                         result = alu_inputs.in1 >>> alu_inputs.in2;
                     end
@@ -220,7 +226,7 @@ module alu
 
             endcase
         end else if (jal_req || jalr_req) begin
-            inc_pc = result[30:2];
+            inc_pc = result[ADDR_LEN-3:0];
         end else begin
             inc_pc = curr_pc + 'd4;
         end 

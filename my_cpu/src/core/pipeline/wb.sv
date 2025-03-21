@@ -21,12 +21,9 @@ module wb
     output rs_addr_t rd_addr_o,
 
     output logic res_en,
-    output logic[XLEN-1:0] result,
+    output logic[XLEN-1:0] result
 
     // input logic[28:0] curr_pc[3] // TODO size param
-
-    // // New pc
-    // output logic[28:0] new_pc[3]
 );
 
 // assign new_pc = curr_pc;

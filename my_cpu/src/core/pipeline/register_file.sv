@@ -37,16 +37,15 @@ import cpu_types::*;
     //Register File
     //Assign zero to r0 and initialize all registers to zero
 
-    initial register_file <= '{default: 0};
-    always_ff @ (posedge clk) begin 
-        if (wr_en)
-            register_file[thread_rd_id, rd_addr] <= new_data; //thread timer 0 , 32, 64, 96
-    end
+    // initial register_file <= '{default: 0};
+    
     always_ff @ (posedge clk) begin
+        if (wr_en)
+            register_file[{thread_rd_id, rd_addr}] <= new_data; //thread timer 0 , 32, 64, 96
         if (rs1_en)
-            rs1_data <= register_file[thread_rs_id, rs1_addr];
+            rs1_data <= register_file[{thread_rs_id, rs1_addr}];
         if (rs2_en)
-            rs2_data <= register_file[thread_rs_id, rs2_addr];
+            rs2_data <= register_file[{thread_rs_id, rs2_addr}];
     end
 
     ////////////////////////////////////////////////////

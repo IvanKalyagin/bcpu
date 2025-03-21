@@ -13,7 +13,7 @@ module idu
     input logic [1:0] thread_id,
 
     input logic[XLEN-1:0] pc2decode, // data from ifu to idu
-    input logic[XLEN-1:0] curr_pc,  // pc_addr
+    input logic[ADDR_LEN-3:0] curr_pc,  // pc_addr
 
     output logic rs1_en,
     output logic rs2_en,
@@ -37,7 +37,7 @@ module idu
     output logic sub_o,
     output logic sra_cmd_o,
 
-    output logic[XLEN-1:0] curr_pc_o,
+    output logic[ADDR_LEN-3:0] curr_pc_o,
 
     output logic[XLEN-1:0] data_o,
 
@@ -57,7 +57,8 @@ logic uses_rs1;
 logic uses_rs2;
 logic uses_rd;
 
-logic j_req;
+logic jal_req;
+logic jalr_req;
 logic b_req;
 logic lui_req;
 logic auipc_req;
@@ -98,7 +99,7 @@ always_comb begin
         5'b11011 : begin // JAL
             uses_rd   = 1'b1;
             jal_req   = 1'b1;
-            curr_data = {signed'(pc2decode[31, 19:12, 20, 30:21])}; 
+            curr_data = signed'({pc2decode[31], pc2decode[19:12], pc2decode[20], pc2decode[30:21]}); 
             alu_logic_op = ALU_LOGIC_ADD;
         end
 
@@ -129,7 +130,7 @@ always_comb begin
                 3'b000 : begin // BEQ
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {20'b0, pc2decode[31, 7, 30:25, 11:8]};
+                    curr_data = {20'b0, pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]};
                     alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
@@ -137,7 +138,7 @@ always_comb begin
                 3'b001 : begin // BNE
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {20'b0, pc2decode[31, 7, 30:25, 11:8]};
+                    curr_data = {20'b0, pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]};
                     alu_logic_op = ALU_LOGIC_ADD; // XOR?
                     sub = 1'b1;
                 end
@@ -145,7 +146,7 @@ always_comb begin
                 3'b100 : begin // BLT
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {signed'(pc2decode[31, 7, 30:25, 11:8])};
+                    curr_data = signed'({pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]});
                     alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
@@ -153,7 +154,7 @@ always_comb begin
                 3'b101 : begin // BGE
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {signed'(pc2decode[31, 7, 30:25, 11:8])};
+                    curr_data = signed'({pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]});
                     alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
@@ -161,7 +162,7 @@ always_comb begin
                 3'b110 : begin // BLTU
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {20'b0, pc2decode[31, 7, 30:25, 11:8]};
+                    curr_data = {20'b0, pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]};
                     alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
@@ -169,7 +170,7 @@ always_comb begin
                 3'b111 : begin // BGEU
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {20'b0, pc2decode[31, 7, 30:25, 11:8]};
+                    curr_data = {20'b0, pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]};
                     alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
@@ -340,6 +341,7 @@ always_comb begin
 
         5'b00000 : begin // LOAD
             l_req   = 1'b1;
+            logic_op = 1'b1;
             case (fn3)
                 3'b000 : begin // LB
                     uses_rs1 = 1'b1;
@@ -382,25 +384,26 @@ always_comb begin
 
         'b01000 : begin // STORE    
             s_req   = 1'b1;
+            logic_op = 1'b1;
             case (fn3)
                 3'b000 : begin // SB
                     uses_rs1 = 1'b1;
                     uses_rs2  = 1'b1;
-                    curr_data = {signed'(pc2decode[31:25], pc2decode[11:7])};
+                    curr_data = signed'({pc2decode[31:25], pc2decode[11:7]});
                     alu_logic_op = ALU_LOGIC_ADD;
                 end
 
                 3'b001 : begin // SH
                     uses_rs1 = 1'b1;
                     uses_rs2  = 1'b1;
-                    curr_data = {signed'(pc2decode[31:25], pc2decode[11:7])};
+                    curr_data = signed'({pc2decode[31:25], pc2decode[11:7]});
                     alu_logic_op = ALU_LOGIC_ADD;
                 end
 
                 3'b010 : begin // SW
                     uses_rs1 = 1'b1;
                     uses_rs2  = 1'b1;
-                    curr_data = {signed'(pc2decode[31:25], pc2decode[11:7])};
+                    curr_data = signed'({pc2decode[31:25], pc2decode[11:7]});
                     alu_logic_op = ALU_LOGIC_ADD;
                 end
 
