@@ -398,3 +398,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+#ModelSim
+*.ini
+*.wlf
+*.vstf
+/my_cpu/src/rtl_work/
+/my_cpu/src/transcript
