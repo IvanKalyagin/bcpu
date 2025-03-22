@@ -10,7 +10,7 @@ module thread_timer (
 
     output  logic [1:0]    thread_timer_data
 
-)
+);
 
     always_ff @(posedge clk) begin
         if (rst) begin

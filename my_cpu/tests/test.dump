@@ -2,28 +2,28 @@
 test.elf:     file format elf32-littleriscv
 
 SYMBOL TABLE:
-80000000 l    d  .text	00000000 .text
+00000000 l    d  .text	00000000 .text
 00000000 l    df *ABS*	00000000 test.o
-80000008 l       .text	00000000 lp
-80000020 l       .text	00000000 lp2
-80000000 g       .text	00000000 _start
-80000024 g       .text	00000000 _end
+00000008 l       .text	00000000 lp
+00000020 l       .text	00000000 lp2
+00000000 g       .text	00000000 _start
+00000024 g       .text	00000000 _end
 
 
 
 Disassembly of section .text:
 
-80000000 <_start>:
-80000000:	00a08093          	addi	x1,x1,10
-80000004:	00000fb3          	add	x31,x0,x0
+00000000 <_start>:
+   0:	00a08093          	addi	x1,x1,10
+   4:	00000133          	add	x2,x0,x0
 
-80000008 <lp>:
-80000008:	00100113          	addi	x2,x0,1
-8000000c:	00578793          	addi	x15,x15,5
-80000010:	00200193          	addi	x3,x0,2
-80000014:	003783b3          	add	x7,x15,x3
-80000018:	fe2098e3          	bne	x1,x2,80000008 <lp>
-8000001c:	00138393          	addi	x7,x7,1
+00000008 <lp>:
+   8:	00110113          	addi	x2,x2,1
+   c:	00578793          	addi	x15,x15,5
+  10:	00200193          	addi	x3,x0,2
+  14:	003783b3          	add	x7,x15,x3
+  18:	fe2098e3          	bne	x1,x2,8 <lp>
+  1c:	00138393          	addi	x7,x7,1
 
-80000020 <lp2>:
-80000020:	0000006f          	jal	x0,80000020 <lp2>
+00000020 <lp2>:
+  20:	0000006f          	jal	x0,20 <lp2>
