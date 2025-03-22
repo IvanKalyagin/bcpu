@@ -382,7 +382,7 @@ always_comb begin
             endcase
         end
 
-        'b01000 : begin // STORE    
+        5'b01000 : begin // STORE    
             s_req   = 1'b1;
             logic_op = 1'b1;
             case (fn3)
@@ -443,7 +443,7 @@ always_ff @(posedge clk) begin
     logic_op_o <= logic_op;
     sra_cmd_o <= fn5[3];
 
-    illegal_inst_o <= !illegal_inst && &pc2decode[1:0];
+    illegal_inst_o <= ~(~illegal_inst && &pc2decode[1:0]);
 end
 
 always_ff @(posedge clk) begin

@@ -234,16 +234,20 @@ module alu
 
     ////////////////////////////////////////////////////
     //Output
-    always_ff @( posedge clk ) begin
-        rd_en_o <= rd_en;
-        rd_addr_o <= rd_addr;
-        if (jal_req || jalr_req) begin
-            rd_data <= curr_pc + 'd4;
+    always_ff @( posedge clk, negedge rst ) begin
+        if (rst) begin
+            new_pc <= 0;
         end else begin
-            rd_data <= result;
-        end 
-        new_pc <= inc_pc;
-        thread_exu_id_out <= thread_exu_id;
+            rd_en_o <= rd_en;
+            rd_addr_o <= rd_addr;
+            if (jal_req || jalr_req) begin
+                rd_data <= curr_pc + 'd4;
+            end else begin
+                rd_data <= result;
+            end 
+            new_pc <= inc_pc;
+            thread_exu_id_out <= thread_exu_id;
+        end
     end
     ////////////////////////////////////////////////////
     //Assertions

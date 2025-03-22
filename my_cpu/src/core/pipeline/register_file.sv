@@ -37,7 +37,9 @@ import cpu_types::*;
     //Register File
     //Assign zero to r0 and initialize all registers to zero
 
-    // initial register_file <= '{default: 0};
+    always_ff @ (negedge rst) begin
+        register_file <= '{default: 0};
+    end
     
     always_ff @ (posedge clk) begin
         if (wr_en)

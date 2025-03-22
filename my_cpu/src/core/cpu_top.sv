@@ -213,8 +213,8 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .wr_en(res_en),
 
         //Thread_timer
-        .thread_rd_id(thread_idu_id),
-        .thread_rs_id(thread_wb_id),
+        .thread_rd_id(thread_wb_id),
+        .thread_rs_id(thread_idu_id),
 
         //rs1 rs2
         .rs1_en(rs1_en),
