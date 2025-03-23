@@ -178,7 +178,7 @@ module alu
                     if (main_sum_flag_z) begin
                         inc_pc = result[30:2];
                     end else begin
-                        inc_pc = curr_pc + 'd4;
+                        inc_pc = curr_pc + 'd1; // TODO fix d1 to d4
                     end
                 end
 
@@ -186,7 +186,7 @@ module alu
                     if (~main_sum_flag_z) begin
                         inc_pc = result[30:2];
                     end else begin
-                        inc_pc = curr_pc + 'd4;
+                        inc_pc = curr_pc + 'd1;
                     end
                 end
 
@@ -194,7 +194,7 @@ module alu
                     if (main_sum_flag_s ^ main_sum_flag_o) begin
                         inc_pc = result[30:2];
                     end else begin
-                        inc_pc = curr_pc + 'd4;
+                        inc_pc = curr_pc + 'd1;
                     end
                 end
 
@@ -202,7 +202,7 @@ module alu
                     if (~(main_sum_flag_s ^ main_sum_flag_o)) begin
                         inc_pc = result[30:2];
                     end else begin
-                        inc_pc = curr_pc + 'd4;
+                        inc_pc = curr_pc + 'd1;
                     end
                 end
 
@@ -210,7 +210,7 @@ module alu
                     if (main_sum_flag_c) begin
                         inc_pc = result[30:2];
                     end else begin
-                        inc_pc = curr_pc + 'd4;
+                        inc_pc = curr_pc + 'd1;
                     end
                 end
 
@@ -218,35 +218,37 @@ module alu
                     if (~main_sum_flag_c) begin
                         inc_pc = result[30:2];
                     end else begin
-                        inc_pc = curr_pc + 'd4;
+                        inc_pc = curr_pc + 'd1;
                     end
                 end
 
-                default : inc_pc = curr_pc + 'd4;
+                default : inc_pc = curr_pc + 'd1;
 
             endcase
         end else if (jal_req || jalr_req) begin
             inc_pc = result[ADDR_LEN-3:0];
         end else begin
-            inc_pc = curr_pc + 'd4;
+            inc_pc = curr_pc + 'd1;
         end 
     end
 
     ////////////////////////////////////////////////////
     //Output
-    always_ff @( posedge clk, negedge rst ) begin
+    always_ff @( posedge clk) begin
         if (rst) begin
             new_pc <= 0;
         end else begin
             rd_en_o <= rd_en;
             rd_addr_o <= rd_addr;
             if (jal_req || jalr_req) begin
-                rd_data <= curr_pc + 'd4;
+                rd_data <= curr_pc + 'd1;
             end else begin
                 rd_data <= result;
             end 
             new_pc <= inc_pc;
             thread_exu_id_out <= thread_exu_id;
+            alu_res_en <= ~(l_req | s_req);
+            lsu_res_en <= l_req;
         end
     end
     ////////////////////////////////////////////////////

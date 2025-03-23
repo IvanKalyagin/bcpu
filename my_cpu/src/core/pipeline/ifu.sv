@@ -31,29 +31,27 @@ module ifu
 // logic[30:0] inc_pc[3]; // !!!!
 logic rst_ff;
 
-always @(posedge clk) begin
-    rst_ff <= rst;
-end
 
-always_comb begin
-    if (~rst_ff)
-        pc2decode = mem_data;
-end
+assign pc2decode = mem_data;
 
 always @(posedge clk) begin
-    if (rst) begin
-        pc2mem <= {thread_id, 13'h0000000}; //reset vector
-    end else begin
+    if (!rst) begin
+    //     pc2mem <= {thread_id, 13'h0000000}; //reset vector
+    // end else begin
         pc2mem <= {thread_id, new_pc};
     end
 end
 
 always @(posedge clk) begin
-    curr_pc <= pc2mem;
+    if (!rst) begin
+        curr_pc <= pc2mem;
+    end
 end
 
 always @(posedge clk) begin
-    thread_idu_id <= thread_id;
+    if (!rst) begin
+        thread_idu_id <= thread_id;
+    end
 end
 
 endmodule

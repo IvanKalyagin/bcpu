@@ -419,39 +419,48 @@ always_comb begin
 end
 
 always_ff @(posedge clk) begin
-    rd_en  <= uses_rd && (rd_addr != '0); // Проверка, что не пишем в 0 регистр
-    rs1_en <= uses_rs1;
-    rs2_en <= uses_rs2;
+    if (!rst) begin
+        rd_en      <= uses_rd && (rd_addr != '0); // Проверка, что не пишем в 0 регистр
+        rd_addr_o  <= rd_addr;
+        
+        jal_req_o   <= jal_req;
+        jalr_req_o  <= jalr_req;
+        b_req_o     <= b_req;
+        lui_req_o   <= lui_req;
+        auipc_req_o <= auipc_req;
+        l_req_o     <= l_req;
+        s_req_o     <= s_req;
 
-    rd_addr_o  <= rd_addr;
-    rs1_addr_o <= rs1_addr;
-    rs2_addr_o <= rs2_addr;
+        data_o <= curr_data;
 
-    jal_req_o   <= jal_req;
-    jalr_req_o  <= jalr_req;
-    b_req_o     <= b_req;
-    lui_req_o   <= lui_req;
-    auipc_req_o <= auipc_req;
-    l_req_o <= l_req;
-    s_req_o <= s_req;
+        sub_o <= sub;
+        cmd_o <= fn3;
+        alu_logic_op_o <= alu_logic_op;
+        logic_op_o <= logic_op;
+        sra_cmd_o <= fn5[3];
 
-    data_o <= curr_data;
+        illegal_inst_o <= ~(~illegal_inst && &pc2decode[1:0]);
+    end
+end
 
-    sub_o <= sub;
-    cmd_o <= fn3;
-    alu_logic_op_o <= alu_logic_op;
-    logic_op_o <= logic_op;
-    sra_cmd_o <= fn5[3];
+always_comb begin
+    rs1_en = uses_rs1;
+    rs2_en = uses_rs2;
 
-    illegal_inst_o <= ~(~illegal_inst && &pc2decode[1:0]);
+    rs1_addr_o = rs1_addr;
+    rs2_addr_o = rs2_addr;
 end
 
 always_ff @(posedge clk) begin
-    curr_pc_o <= curr_pc;
+    if (!rst) begin
+        curr_pc_o <= curr_pc;
+    end
 end
 
 always_ff @(posedge clk) begin
-    thread_exu_id <= thread_id;
+    if (!rst) begin
+        thread_exu_id <= thread_id;
+    end
 end
 
 endmodule
