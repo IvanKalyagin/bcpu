@@ -24,3 +24,5 @@ vlog -sv -svinputport=net -work work +incdir+core {core/cpu_wrapper.sv}
 vlog -sv -svinputport=net -work work +incdir+my_tb {my_tb/tb.sv}
 
 vsim -t 1ps -L rtl_work -L work -voptargs="+acc"  tb -G HEX_FILE=$HEX_FILE
+
+do scripts/wave.do

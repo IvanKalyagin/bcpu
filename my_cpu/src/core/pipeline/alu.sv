@@ -90,18 +90,26 @@ module alu
 
     //Logic ops put through the adder carry chain to reduce resources
     always_comb begin
-        case (logic_op)
-            ALU_LOGIC_XOR : adder_in1 = alu_inputs.in1 ^ alu_inputs.in2;    
-            ALU_LOGIC_OR : adder_in1 = alu_inputs.in1 | alu_inputs.in2;
-            ALU_LOGIC_AND : adder_in1 = alu_inputs.in1 & alu_inputs.in2;
-            ALU_LOGIC_ADD : adder_in1 = alu_inputs.in1;
-        endcase
-        case (logic_op)
-            ALU_LOGIC_XOR : adder_in2 = 0;
-            ALU_LOGIC_OR : adder_in2 = 0;
-            ALU_LOGIC_AND : adder_in2 = 0;
-            ALU_LOGIC_ADD : adder_in2 = alu_inputs.in2 ^ {33{alu_inputs.subtract}};
-        endcase
+        if (!rst) begin
+            case (alu_logic_op)
+                ALU_LOGIC_XOR : begin 
+                    adder_in1 = alu_inputs.in1 ^ alu_inputs.in2; 
+                    adder_in2 = 0; 
+                end  
+                ALU_LOGIC_OR  : begin 
+                    adder_in1 = alu_inputs.in1 | alu_inputs.in2;
+                    adder_in2 = 0;
+                end
+                ALU_LOGIC_AND : begin 
+                    adder_in1 = alu_inputs.in1 & alu_inputs.in2;
+                    adder_in2 = 0;
+                end
+                ALU_LOGIC_ADD : begin
+                    adder_in1 = alu_inputs.in1;
+                    adder_in2 = alu_inputs.in2 ^ {33{alu_inputs.subtract}};
+                end
+            endcase
+        end
     end
 
     assign {add_sub_result, add_sub_carry_in} = {adder_in1, alu_inputs.subtract} + {adder_in2, alu_inputs.subtract};
@@ -176,59 +184,59 @@ module alu
             case (cmd)
                 3'b000 : begin // BEQ
                     if (main_sum_flag_z) begin
-                        inc_pc = result[30:2];
+                        inc_pc = curr_pc + data;
                     end else begin
-                        inc_pc = curr_pc + 'd1; // TODO fix d1 to d4
+                        inc_pc = curr_pc + 'd4; // TODO fix d1 to d4
                     end
                 end
 
                 3'b001 : begin // BNE
                     if (~main_sum_flag_z) begin
-                        inc_pc = result[30:2];
+                        inc_pc = curr_pc + data;
                     end else begin
-                        inc_pc = curr_pc + 'd1;
+                        inc_pc = curr_pc + 'd4;
                     end
                 end
 
                 3'b100 : begin // BLT
                     if (main_sum_flag_s ^ main_sum_flag_o) begin
-                        inc_pc = result[30:2];
+                        inc_pc = curr_pc + data;
                     end else begin
-                        inc_pc = curr_pc + 'd1;
+                        inc_pc = curr_pc + 'd4;
                     end
                 end
 
                 3'b101 : begin // BGE
                     if (~(main_sum_flag_s ^ main_sum_flag_o)) begin
-                        inc_pc = result[30:2];
+                        inc_pc = curr_pc + data;
                     end else begin
-                        inc_pc = curr_pc + 'd1;
+                        inc_pc = curr_pc + 'd4;
                     end
                 end
 
                 3'b110 : begin // BLTU
                     if (main_sum_flag_c) begin
-                        inc_pc = result[30:2];
+                        inc_pc = curr_pc + data;
                     end else begin
-                        inc_pc = curr_pc + 'd1;
+                        inc_pc = curr_pc + 'd4;
                     end
                 end
 
                 3'b111 : begin // BGEU
                     if (~main_sum_flag_c) begin
-                        inc_pc = result[30:2];
+                        inc_pc = curr_pc + data;
                     end else begin
-                        inc_pc = curr_pc + 'd1;
+                        inc_pc = curr_pc + 'd4;
                     end
                 end
 
-                default : inc_pc = curr_pc + 'd1;
+                default : inc_pc = curr_pc + 'd4;
 
             endcase
         end else if (jal_req || jalr_req) begin
             inc_pc = result[ADDR_LEN-3:0];
         end else begin
-            inc_pc = curr_pc + 'd1;
+            inc_pc = curr_pc + 'd4;
         end 
     end
 
@@ -241,7 +249,7 @@ module alu
             rd_en_o <= rd_en;
             rd_addr_o <= rd_addr;
             if (jal_req || jalr_req) begin
-                rd_data <= curr_pc + 'd1;
+                rd_data <= curr_pc + 'd4;
             end else begin
                 rd_data <= result;
             end 

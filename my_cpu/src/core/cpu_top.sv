@@ -28,6 +28,8 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
     // IDU
     logic rs1_en;
     logic rs2_en;
+    logic rs1_en_alu;
+    logic rs2_en_alu;
     rs_addr_t rs1_addr_o;
     rs_addr_t rs2_addr_o;
     logic rd_en;
@@ -105,13 +107,16 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .pc2decode(pc2decode), // data from ifu to idu
         .curr_pc(curr_pc),  // pc_addr
 
-        .rs1_en(rs1_en),
-        .rs2_en(rs2_en),
+        .rs1_en_reg(rs1_en),
+        .rs2_en_reg(rs2_en),
         .rs1_addr_o(rs1_addr_o),
         .rs2_addr_o(rs2_addr_o),
 
         .rd_en(rd_en),
         .rd_addr_o(rd_addr),
+
+        .rs1_en_alu(rs1_en_alu),
+        .rs2_en_alu(rs2_en_alu),
 
         .jal_req_o(jal_req_o),
         .jalr_req_o(jalr_req_o),
@@ -140,8 +145,8 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .clk(clk),
         .rst(rst),
 
-        .rs1_en(rs1_en),
-        .rs2_en(rs2_en),
+        .rs1_en(rs1_en_alu),
+        .rs2_en(rs2_en_alu),
         .rd_en(rd_en),
         .rs1_data(rs1_data),
         .rs2_data(rs2_data),

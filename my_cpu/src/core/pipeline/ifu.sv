@@ -38,13 +38,13 @@ always @(posedge clk) begin
     if (!rst) begin
     //     pc2mem <= {thread_id, 13'h0000000}; //reset vector
     // end else begin
-        pc2mem <= {thread_id, new_pc};
+        pc2mem <= {thread_id, new_pc[ADDR_LEN-3:2]};
     end
 end
 
 always @(posedge clk) begin
     if (!rst) begin
-        curr_pc <= pc2mem;
+        curr_pc <= {pc2mem[ADDR_LEN-3:0], 2'b00};
     end
 end
 

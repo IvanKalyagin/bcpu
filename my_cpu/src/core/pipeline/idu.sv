@@ -15,13 +15,15 @@ module idu
     input logic[XLEN-1:0] pc2decode, // data from ifu to idu
     input logic[ADDR_LEN-3:0] curr_pc,  // pc_addr
 
-    output logic rs1_en,
-    output logic rs2_en,
+    output logic rs1_en_reg,
+    output logic rs2_en_reg,
     output rs_addr_t rs1_addr_o,
     output rs_addr_t rs2_addr_o,
 
     output logic rd_en,
     output rs_addr_t rd_addr_o,
+    output logic rs1_en_alu,
+    output logic rs2_en_alu,
 
     output logic jal_req_o,
     output logic jalr_req_o,
@@ -91,12 +93,14 @@ always_comb begin
     auipc_req = 1'b0;
     s_req = 1'b0;
     l_req = 1'b0;
+    b_req = 1'b0;
     sub = 1'b0;
     logic_op = 1'b0;
     illegal_inst = 1'b0;
 
     case (cmd)
         5'b11011 : begin // JAL
+            logic_op = 1'b1;
             uses_rd   = 1'b1;
             jal_req   = 1'b1;
             curr_data = signed'({pc2decode[31], pc2decode[19:12], pc2decode[20], pc2decode[30:21]}); 
@@ -104,6 +108,7 @@ always_comb begin
         end
 
         5'b11001 : begin // JALR
+            logic_op = 1'b1;
             uses_rd   = 1'b1;
             uses_rs1  = 1'b1;
             jalr_req  = 1'b1;
@@ -112,25 +117,28 @@ always_comb begin
         end
 
         5'b01101 : begin // LUI
+            logic_op = 1'b1;
             uses_rd   = 1'b1;
             lui_req   = 1'b1;
             curr_data = {signed'(pc2decode[31:12]), 12'b0};
         end
 
         5'b00101 : begin // AUIPC
+            logic_op = 1'b1;
             uses_rd   = 1'b1;
             auipc_req = 1'b1;
             curr_data = {signed'(pc2decode[31:12]), 12'b0};
             alu_logic_op = ALU_LOGIC_ADD;
         end
 
-        5'b11001 : begin // BRANCH
+        5'b11000 : begin // BRANCH
             b_req = 1'b1;
+            logic_op = 1'b1;
             case (fn3)
                 3'b000 : begin // BEQ
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {20'b0, pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]};
+                    curr_data = signed'({pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]});
                     alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
@@ -138,7 +146,7 @@ always_comb begin
                 3'b001 : begin // BNE
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {20'b0, pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]};
+                    curr_data = signed'({pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]});
                     alu_logic_op = ALU_LOGIC_ADD; // XOR?
                     sub = 1'b1;
                 end
@@ -162,7 +170,7 @@ always_comb begin
                 3'b110 : begin // BLTU
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {20'b0, pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]};
+                    curr_data = signed'({pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]});
                     alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
@@ -170,7 +178,7 @@ always_comb begin
                 3'b111 : begin // BGEU
                     uses_rs1 = 1'b1;
                     uses_rs2 = 1'b1;
-                    curr_data = {20'b0, pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]};
+                    curr_data = signed'({pc2decode[31], pc2decode[7], pc2decode[30:25], pc2decode[11:8]});
                     alu_logic_op = ALU_LOGIC_ADD;
                     sub = 1'b1;
                 end
@@ -422,6 +430,9 @@ always_ff @(posedge clk) begin
     if (!rst) begin
         rd_en      <= uses_rd && (rd_addr != '0); // Проверка, что не пишем в 0 регистр
         rd_addr_o  <= rd_addr;
+
+        rs1_en_alu  <= uses_rs1;
+        rs2_en_alu  <= uses_rs2;
         
         jal_req_o   <= jal_req;
         jalr_req_o  <= jalr_req;
@@ -444,8 +455,8 @@ always_ff @(posedge clk) begin
 end
 
 always_comb begin
-    rs1_en = uses_rs1;
-    rs2_en = uses_rs2;
+    rs1_en_reg = uses_rs1;
+    rs2_en_reg = uses_rs2;
 
     rs1_addr_o = rs1_addr;
     rs2_addr_o = rs2_addr;
