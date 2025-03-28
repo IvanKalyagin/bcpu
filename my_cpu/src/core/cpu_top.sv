@@ -23,7 +23,7 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
     // IFU
     logic[ADDR_LEN-3:0] new_pc;
     logic[XLEN-1:0] pc2decode;
-    logic[ADDR_LEN-3:0] curr_pc;
+    logic[ADDR_LEN-1:0] curr_pc;
 
     // IDU
     logic rs1_en;
@@ -49,7 +49,7 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
     logic sub_o;
     logic sra_cmd_o;
 
-    logic[ADDR_LEN-3:0] curr_pc_o;
+    logic[ADDR_LEN-1:0] curr_pc_o;
 
     logic[XLEN-1:0] data_o;
 

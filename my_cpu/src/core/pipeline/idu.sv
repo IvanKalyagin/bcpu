@@ -13,7 +13,7 @@ module idu
     input logic [1:0] thread_id,
 
     input logic[XLEN-1:0] pc2decode, // data from ifu to idu
-    input logic[ADDR_LEN-3:0] curr_pc,  // pc_addr
+    input logic[ADDR_LEN-1:0] curr_pc,  // pc_addr
 
     output logic rs1_en_reg,
     output logic rs2_en_reg,
@@ -39,7 +39,7 @@ module idu
     output logic sub_o,
     output logic sra_cmd_o,
 
-    output logic[ADDR_LEN-3:0] curr_pc_o,
+    output logic[ADDR_LEN-1:0] curr_pc_o,
 
     output logic[XLEN-1:0] data_o,
 

@@ -25,7 +25,7 @@ module ifu
 
     output logic [1:0] thread_idu_id,
 
-    output logic[ADDR_LEN-3:0] curr_pc
+    output logic[ADDR_LEN-1:0] curr_pc
 );
 
 // logic[30:0] inc_pc[3]; // !!!!
@@ -38,7 +38,7 @@ always @(posedge clk) begin
     if (!rst) begin
     //     pc2mem <= {thread_id, 13'h0000000}; //reset vector
     // end else begin
-        pc2mem <= {thread_id, new_pc[ADDR_LEN-3:2]};
+        pc2mem <= {thread_id, new_pc};
     end
 end
 

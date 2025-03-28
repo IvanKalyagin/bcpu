@@ -62,7 +62,7 @@ module alu
     logic[XLEN:0] adder_in2;
 
 
-    logic[ADDR_LEN-3:0] inc_pc;
+    logic[ADDR_LEN-1:0] inc_pc;
 
     logic main_sum_pos_ovflw;
     logic main_sum_neg_ovflw;
@@ -253,7 +253,7 @@ module alu
             end else begin
                 rd_data <= result;
             end 
-            new_pc <= inc_pc;
+            new_pc <= inc_pc[ADDR_LEN-1:2];
             thread_exu_id_out <= thread_exu_id;
             alu_res_en <= ~(l_req | s_req);
             lsu_res_en <= l_req;
