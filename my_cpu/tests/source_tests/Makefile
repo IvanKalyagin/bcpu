@@ -9,7 +9,7 @@ LD = riscv64-linux-gnu-ld -b elf32-littleriscv
 OBJCOPY = riscv64-linux-gnu-objcopy
 OBJDUMP = riscv64-linux-gnu-objdump
 endif
-SRC = test
+SRC = immediate
 
 %.o: %.s
 	$(AS) $< -o $@

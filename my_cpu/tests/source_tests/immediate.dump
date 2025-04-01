@@ -1,0 +1,81 @@
+
+immediate.elf:     file format elf32-littleriscv
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    df *ABS*	00000000 immediate.o
+000000fc l       .text	00000000 lp2
+00000000 g       .text	00000000 _start
+00000100 g       .text	00000000 _end
+
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	00308093          	addi	x1,x1,3
+   4:	7f80aa13          	slti	x20,x1,2040
+   8:	ff80aa93          	slti	x21,x1,-8
+   c:	0010ab13          	slti	x22,x1,1
+  10:	7f80ba13          	sltiu	x20,x1,2040
+  14:	ff80ba93          	sltiu	x21,x1,-8
+  18:	0010bb13          	sltiu	x22,x1,1
+  1c:	ffa18193          	addi	x3,x3,-6
+  20:	7f81aa13          	slti	x20,x3,2040
+  24:	ff81aa93          	slti	x21,x3,-8
+  28:	0011ab13          	slti	x22,x3,1
+  2c:	7f81ba13          	sltiu	x20,x3,2040
+  30:	ff81ba93          	sltiu	x21,x3,-8
+  34:	0011bb13          	sltiu	x22,x3,1
+  38:	00020213          	addi	x4,x4,0 # 0 <_start>
+  3c:	7f822a13          	slti	x20,x4,2040
+  40:	ff822a93          	slti	x21,x4,-8
+  44:	00122b13          	slti	x22,x4,1
+  48:	7f823a13          	sltiu	x20,x4,2040
+  4c:	ff823a93          	sltiu	x21,x4,-8
+  50:	00123b13          	sltiu	x22,x4,1
+  54:	00828293          	addi	x5,x5,8
+  58:	7f82ca13          	xori	x20,x5,2040
+  5c:	ff82ca93          	xori	x21,x5,-8
+  60:	0012cb13          	xori	x22,x5,1
+  64:	00034a13          	xori	x20,x6,0
+  68:	7ff34a93          	xori	x21,x6,2047
+  6c:	80134b13          	xori	x22,x6,-2047
+  70:	01030313          	addi	x6,x6,16
+  74:	7f836a13          	ori	x20,x6,2040
+  78:	ff836a93          	ori	x21,x6,-8
+  7c:	00136b13          	ori	x22,x6,1
+  80:	00036a13          	ori	x20,x6,0
+  84:	7ff36a93          	ori	x21,x6,2047
+  88:	80136b13          	ori	x22,x6,-2047
+  8c:	00f50513          	addi	x10,x10,15
+  90:	7f857a13          	andi	x20,x10,2040
+  94:	ff857a93          	andi	x21,x10,-8
+  98:	00157b13          	andi	x22,x10,1
+  9c:	00057a13          	andi	x20,x10,0
+  a0:	7ff57a93          	andi	x21,x10,2047
+  a4:	80157b13          	andi	x22,x10,-2047
+  a8:	00158593          	addi	x11,x11,1
+  ac:	00859a13          	slli	x20,x11,0x8
+  b0:	00259a93          	slli	x21,x11,0x2
+  b4:	00159b13          	slli	x22,x11,0x1
+  b8:	00059a13          	slli	x20,x11,0x0
+  bc:	01459a93          	slli	x21,x11,0x14
+  c0:	01f59b13          	slli	x22,x11,0x1f
+  c4:	00160613          	addi	x12,x12,1
+  c8:	00865a13          	srli	x20,x12,0x8
+  cc:	00365a93          	srli	x21,x12,0x3
+  d0:	00165b13          	srli	x22,x12,0x1
+  d4:	00065a13          	srli	x20,x12,0x0
+  d8:	01465a93          	srli	x21,x12,0x14
+  dc:	01f65b13          	srli	x22,x12,0x1f
+  e0:	00168693          	addi	x13,x13,1
+  e4:	4086da13          	srai	x20,x13,0x8
+  e8:	4026da93          	srai	x21,x13,0x2
+  ec:	4016db13          	srai	x22,x13,0x1
+  f0:	4006da13          	srai	x20,x13,0x0
+  f4:	4146da93          	srai	x21,x13,0x14
+  f8:	41f6db13          	srai	x22,x13,0x1f
+
+000000fc <lp2>:
+  fc:	0000006f          	jal	x0,fc <lp2>

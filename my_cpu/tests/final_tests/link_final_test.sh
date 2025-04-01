@@ -1,8 +1,8 @@
 #!/bin/sh
 
 file1="../zero_hex/zero.hex"
-file2="../source_tests/test.hex"
-output="merged_output.txt"  # Результат
+file2="../source_tests/immediate.hex"
+output="immediate.hex"  # Результат
 
 # Получаем количество строк во втором файле
 lines_in_file2=$(wc -l < "$file2")

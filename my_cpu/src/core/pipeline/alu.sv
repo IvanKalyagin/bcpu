@@ -73,8 +73,18 @@ module alu
 
     alu_inputs_t alu_inputs;
 
+    logic rst_ff;
+    logic rst_ff_ff;
+    logic rst_ff_ff_ff;
+
     //implementation
     ////////////////////////////////////////////////////
+
+    always_ff @(posedge clk) begin
+        rst_ff <= rst;
+        rst_ff_ff <= rst_ff;
+        rst_ff_ff_ff <= rst_ff_ff;
+    end
 
     always_comb begin
         if (rs1_en)
@@ -94,25 +104,35 @@ module alu
             case (alu_logic_op)
                 ALU_LOGIC_XOR : begin 
                     adder_in1 = alu_inputs.in1 ^ alu_inputs.in2; 
-                    adder_in2 = 0; 
+                    adder_in2 = 0;
+                    add_sub_result = {1'b0, adder_in1} + {1'b0, adder_in2}; 
                 end  
                 ALU_LOGIC_OR  : begin 
                     adder_in1 = alu_inputs.in1 | alu_inputs.in2;
                     adder_in2 = 0;
+                    add_sub_result = {1'b0, adder_in1} + {1'b0, adder_in2};
                 end
                 ALU_LOGIC_AND : begin 
                     adder_in1 = alu_inputs.in1 & alu_inputs.in2;
                     adder_in2 = 0;
+                    add_sub_result = {1'b0, adder_in1} + {1'b0, adder_in2};
                 end
                 ALU_LOGIC_ADD : begin
                     adder_in1 = alu_inputs.in1;
-                    adder_in2 = alu_inputs.in2 ^ {33{alu_inputs.subtract}};
+                    adder_in2 = alu_inputs.in2;
+
+                    if (alu_inputs.subtract) begin
+                        add_sub_result = {1'b0, adder_in1} - {1'b0, adder_in2};
+                    end else begin
+                        add_sub_result = {1'b0, adder_in1} + {1'b0, adder_in2};
+                    end
+                    // adder_in2 = alu_inputs.in2 ^ {33{alu_inputs.subtract}};
                 end
             endcase
         end
     end
 
-    assign {add_sub_result, add_sub_carry_in} = {adder_in1, alu_inputs.subtract} + {adder_in2, alu_inputs.subtract};
+    // assign {add_sub_result, add_sub_carry_in} = {adder_in1, alu_inputs.subtract} + {adder_in2, alu_inputs.subtract};
 
     always_comb begin
         main_sum_pos_ovflw = ~adder_in1[XLEN-1]
@@ -243,7 +263,7 @@ module alu
     ////////////////////////////////////////////////////
     //Output
     always_ff @( posedge clk) begin
-        if (rst) begin
+        if (rst | rst_ff | rst_ff_ff | rst_ff_ff_ff) begin
             new_pc <= 0;
         end else begin
             rd_en_o <= rd_en;

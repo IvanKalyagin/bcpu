@@ -16,3 +16,5 @@ add wave -noupdate /tb/uut/cpu/wb_block/*
 add wave -noupdate -divider Register File
 add wave -noupdate /tb/uut/cpu/reg_file_block/*
 add wave -noupdate /tb/uut/cpu/reg_file_block/register_file
+
+WaveRestoreZoom {0 ns} {30000 ns}

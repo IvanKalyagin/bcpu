@@ -28,10 +28,6 @@ module ifu
     output logic[ADDR_LEN-1:0] curr_pc
 );
 
-// logic[30:0] inc_pc[3]; // !!!!
-logic rst_ff;
-
-
 assign pc2decode = mem_data;
 
 always @(posedge clk) begin
