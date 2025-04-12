@@ -6,7 +6,8 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
     input logic ext_reset
 );
         
-    parameter HEX_FILE = "";
+    parameter HEX_FILE = ""; 
+    parameter DATA_FILE = "";
 
     logic clk;
 	 assign clk=sys_clk;
@@ -20,6 +21,9 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
     logic[ADDR_LEN-1:0] dram_addr;
     logic[XLEN-1:0] dram_data_out;
     logic[XLEN-1:0] dram_data_in;
+    logic[XLEN/8-1:0] ls_size_o;
+    logic             l_req_o;
+    logic             s_req_o;
 
 	 
     bcpu cpu(
@@ -30,6 +34,9 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .pc_addr(pc_addr),
 
         .dram_addr(dram_addr),
+        .l_req_o(l_req_o),
+        .s_req_o(s_req_o),
+        .ls_size_o(ls_size_o),
         .dram_data_out(dram_data_out),
         .dram_data_in(dram_data_in)
     );
@@ -42,9 +49,18 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .addr_a(pc_addr)
     );
 
-    // dram dram_block(
+    dram #(DATA_FILE, 1) dram_block(
+        .clk(clk),
+        .rst(rst),
 
-    // );
+        .addr_a(dram_addr),
+        .be_a(ls_size_o),
+        .load(l_req_o),
+        .store(s_req_o),
+        .data_in(dram_data_out),
+
+        .data_out_a(dram_data_in)
+    );
 
     //design_2 infra(.*);
 

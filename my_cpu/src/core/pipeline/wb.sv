@@ -14,6 +14,7 @@ module wb
 
     input logic[XLEN-1:0] lsu_res,
     input logic lsu_res_en,
+    input logic [2:0] cmd,
 
     input rs_addr_t rd_addr,
     input logic rd_en,
@@ -23,7 +24,6 @@ module wb
     output logic res_en,
     output logic[XLEN-1:0] result
 
-    // input logic[28:0] curr_pc[3] // TODO size param
 );
 
 // assign new_pc = curr_pc;
@@ -34,7 +34,31 @@ always_comb begin
         result <= alu_res;
         rd_addr_o <= rd_addr;
     end else if (lsu_res_en) begin
-        result <= lsu_res;
+        case (cmd)
+            3'b000 : begin // LB
+                result <= signed'(lsu_res[7:0]);
+            end
+
+            3'b001 : begin // LH
+                result <= signed'(lsu_res[15:0]);
+            end
+
+            3'b010 : begin // LW
+                result <= lsu_res;
+            end
+
+            3'b100 : begin // LBU
+                result <= {24'b0,lsu_res[7:0]};
+            end
+
+            3'b101 : begin // LHU
+                result <= {16'b0,lsu_res[15:0]};
+            end
+
+            default : begin
+
+            end
+        endcase
         rd_addr_o <= rd_addr;
     end else begin
         result <= '0;

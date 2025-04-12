@@ -3,7 +3,6 @@ package riscv_types;
 	import cpu_config::*;
 
     localparam XLEN = 32;
-    localparam PAGE_ADDR_W = 12;
     localparam ECODE_W = 5;
     localparam LINES = 65536; //2^16
     localparam ADDR_LEN = $clog2(LINES);

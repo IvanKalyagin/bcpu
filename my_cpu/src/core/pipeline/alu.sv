@@ -48,8 +48,10 @@ module alu
     output logic lsu_res_en, 
 
     output logic [1:0] thread_exu_id_out,
+    output logic [2:0] cmd_o,
 
-    output logic[XLEN-1:0] result,
+    output logic[ADDR_LEN-1:0] dram_addr,
+    output logic[XLEN-1:0]     dram_data,
 
     // New pc
     output logic[ADDR_LEN-3:0] new_pc
@@ -60,6 +62,7 @@ module alu
 
     logic[XLEN:0] adder_in1;
     logic[XLEN:0] adder_in2;
+    logic[XLEN-1:0] result;
 
 
     logic[ADDR_LEN-1:0] inc_pc;
@@ -185,6 +188,27 @@ module alu
         end
     end
 
+    always_comb begin
+        dram_addr = {thread_exu_id, add_sub_result[ADDR_LEN-3:0]};
+        case (cmd)
+            3'b000 : begin // SB
+                dram_data = unsigned'(rs2_data[7:0]);
+            end
+
+            3'b001 : begin // SH
+                dram_data = unsigned'(rs2_data[15:0]);
+            end
+
+            3'b010 : begin // SW
+                dram_data = rs2_data;
+            end
+
+            default: begin
+                dram_data = 0;
+            end
+        endcase
+    end
+
     // barrel_shifter shifter (
     //         .shifter_input(alu_inputs.shifter_in),
     //         .shift_amount(alu_inputs.shift_amount),
@@ -268,6 +292,7 @@ module alu
         end else begin
             rd_en_o <= rd_en;
             rd_addr_o <= rd_addr;
+            cmd_o <= cmd;
             if (jal_req || jalr_req) begin
                 rd_data <= curr_pc + 'd4;
             end else begin

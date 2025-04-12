@@ -38,6 +38,7 @@ module idu
     output logic logic_op_o,
     output logic sub_o,
     output logic sra_cmd_o,
+    output logic[XLEN/8-1:0] ls_size_o,
 
     output logic[ADDR_LEN-1:0] curr_pc_o,
 
@@ -67,6 +68,8 @@ logic auipc_req;
 logic l_req;
 logic s_req;
 
+logic[XLEN/8-1:0] ls_size;
+
 logic illegal_inst;
 
 logic [4:0] rs1_addr;
@@ -95,6 +98,7 @@ always_comb begin
     l_req = 1'b0;
     b_req = 1'b0;
     sub = 1'b0;
+    ls_size = 0;
     logic_op = 1'b0;
     illegal_inst = 1'b0;
 
@@ -356,6 +360,7 @@ always_comb begin
                     uses_rd  = 1'b1;
                     curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
+                    ls_size = 4'b0001;
                 end
 
                 3'b001 : begin // LH
@@ -363,6 +368,7 @@ always_comb begin
                     uses_rd  = 1'b1;
                     curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
+                    ls_size = 4'b0011;
                 end
 
                 3'b010 : begin // LW
@@ -370,6 +376,7 @@ always_comb begin
                     uses_rd  = 1'b1;
                     curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
+                    ls_size = 4'b1111;
                 end
 
                 3'b100 : begin // LBU
@@ -377,6 +384,7 @@ always_comb begin
                     uses_rd  = 1'b1;
                     curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
+                    ls_size = 4'b0001;
                 end
 
                 3'b101 : begin // LHU
@@ -384,6 +392,7 @@ always_comb begin
                     uses_rd  = 1'b1;
                     curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
+                    ls_size = 4'b0011;
                 end
 
                 default : illegal_inst = 1'b1;
@@ -399,6 +408,7 @@ always_comb begin
                     uses_rs2  = 1'b1;
                     curr_data = signed'({pc2decode[31:25], pc2decode[11:7]});
                     alu_logic_op = ALU_LOGIC_ADD;
+                    ls_size = 4'b0001;
                 end
 
                 3'b001 : begin // SH
@@ -406,6 +416,7 @@ always_comb begin
                     uses_rs2  = 1'b1;
                     curr_data = signed'({pc2decode[31:25], pc2decode[11:7]});
                     alu_logic_op = ALU_LOGIC_ADD;
+                    ls_size = 4'b0011;
                 end
 
                 3'b010 : begin // SW
@@ -413,6 +424,7 @@ always_comb begin
                     uses_rs2  = 1'b1;
                     curr_data = signed'({pc2decode[31:25], pc2decode[11:7]});
                     alu_logic_op = ALU_LOGIC_ADD;
+                    ls_size = 4'b1111;
                 end
 
                 default : illegal_inst = 1'b1;
@@ -449,6 +461,7 @@ always_ff @(posedge clk) begin
         alu_logic_op_o <= alu_logic_op;
         logic_op_o <= logic_op;
         sra_cmd_o <= fn5[3];
+        ls_size_o <= ls_size;
 
         illegal_inst_o <= ~(~illegal_inst && &pc2decode[1:0]);
     end

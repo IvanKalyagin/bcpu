@@ -9,6 +9,9 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         output logic[ADDR_LEN-1:0] pc_addr,
 
         output logic[ADDR_LEN-1:0] dram_addr,
+        output logic[XLEN/8-1:0] ls_size_o,
+        output logic             l_req_o,
+        output logic             s_req_o,
         output logic[XLEN-1:0] dram_data_out,
         input logic[XLEN-1:0] dram_data_in
 
@@ -40,8 +43,6 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
     logic b_req_o;
     logic lui_req_o;
     logic auipc_req_o;
-    logic l_req_o;
-    logic s_req_o;
     
     logic [2:0] cmd_o;
     alu_logic_op_t alu_logic_op_o;
@@ -65,6 +66,7 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
 
     logic alu_res_en;
     logic lsu_res_en;
+    logic [2:0] cmd_wb;
 
     // WB
     rs_addr_t rd_addr_wb;
@@ -125,6 +127,7 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .auipc_req_o(auipc_req_o),
         .l_req_o(l_req_o),
         .s_req_o(s_req_o),
+        .ls_size_o(ls_size_o),
         
         .cmd_o(cmd_o),
         .alu_logic_op_o(alu_logic_op_o),
@@ -181,9 +184,12 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .alu_res_en(alu_res_en),
         .lsu_res_en(lsu_res_en), 
 
+        .cmd_o(cmd_wb),
+
         .thread_exu_id_out(thread_wb_id),
 
-        .result(dram_data_out),
+        .dram_addr(dram_addr),
+        .dram_data(dram_data_out),
 
         // New pc
         .new_pc(new_pc)
@@ -197,7 +203,8 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .alu_res_en(alu_res_en),
 
         .lsu_res(dram_data_in),
-        .lsu_res_en(lsu_res_en), 
+        .lsu_res_en(lsu_res_en),
+        .cmd(cmd_wb), 
 
         .rd_en(rd_en_o),
         .rd_addr(rd_addr_o),
