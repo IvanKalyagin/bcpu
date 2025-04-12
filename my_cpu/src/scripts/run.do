@@ -6,6 +6,7 @@ vlib rtl_work
 vmap work rtl_work
 
 set HEX_FILE $1
+set DATA_FILE $2
 
 vlog -sv -svinputport=net -work work +incdir+lib {lib/cpu_config.sv}
 vlog -sv -svinputport=net -work work +incdir+lib {lib/riscv_types.sv}
@@ -23,6 +24,6 @@ vlog -sv -svinputport=net -work work +incdir+core {core/cpu_wrapper.sv}
 
 vlog -sv -svinputport=net -work work +incdir+my_tb {my_tb/tb.sv}
 
-vsim -t 1ps -L rtl_work -L work -voptargs="+acc"  tb -G HEX_FILE=$HEX_FILE
+vsim -t 1ps -L rtl_work -L work -voptargs="+acc"  tb -G HEX_FILE=$HEX_FILE -G DATA_FILE=$DATA_FILE
 
 do scripts/wave.do

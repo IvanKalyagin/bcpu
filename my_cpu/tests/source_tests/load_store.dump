@@ -1,0 +1,87 @@
+
+load_store.elf:     file format elf32-littleriscv
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00010000 l    d  .data	00000000 .data
+00000000 l    df *ABS*	00000000 load_store.o
+00000008 l       *ABS*	00000000 len
+00000004 l       *ABS*	00000000 enroll
+00000004 l       *ABS*	00000000 elem_sz
+00010000 l       .data	00000000 _x
+0000000c l       .text	00000000 loop
+0000004c l       .text	00000000 lp2
+0001003c l       .data	00000000 _y
+00000000 g       .text	00000000 _start
+00010050 g       .data	00000000 _end
+
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	00200a13          	addi	x20,x0,2
+   4:	00010097          	auipc	x1,0x10
+   8:	ffc08093          	addi	x1,x1,-4 # 10000 <_x>
+
+0000000c <loop>:
+   c:	0000a103          	lw	x2,0(x1)
+  10:	002f8fb3          	add	x31,x31,x2
+  14:	0040a103          	lw	x2,4(x1)
+  18:	002f8fb3          	add	x31,x31,x2
+  1c:	0080a103          	lw	x2,8(x1)
+  20:	002f8fb3          	add	x31,x31,x2
+  24:	00c0a103          	lw	x2,12(x1)
+  28:	002f8fb3          	add	x31,x31,x2
+  2c:	01008093          	addi	x1,x1,16
+  30:	fffa0a13          	addi	x20,x20,-1
+  34:	fc0a1ce3          	bne	x20,x0,c <loop>
+  38:	001f8f93          	addi	x31,x31,1
+  3c:	002fa023          	sw	x2,0(x31)
+  40:	042fa023          	sw	x2,64(x31)
+  44:	081fa023          	sw	x1,128(x31)
+  48:	01ffa823          	sw	x31,16(x31)
+
+0000004c <lp2>:
+  4c:	0000006f          	jal	x0,4c <lp2>
+
+Disassembly of section .data:
+
+00010000 <_x>:
+   10000:	0001                	c.addi	x0,0
+   10002:	0000                	c.unimp
+   10004:	0002                	c.slli64	x0
+   10006:	0000                	c.unimp
+   10008:	00000003          	lb	x0,0(x0) # 0 <_start>
+   1000c:	0004                	.2byte	0x4
+   1000e:	0000                	c.unimp
+   10010:	0005                	c.addi	x0,1
+   10012:	0000                	c.unimp
+   10014:	0006                	c.slli	x0,0x1
+   10016:	0000                	c.unimp
+   10018:	00000007          	.4byte	0x7
+   1001c:	0008                	.2byte	0x8
+   1001e:	0000                	c.unimp
+   10020:	0009                	c.addi	x0,2
+   10022:	0000                	c.unimp
+   10024:	000a                	c.slli	x0,0x2
+   10026:	0000                	c.unimp
+   10028:	0000000b          	.4byte	0xb
+   1002c:	000c                	.2byte	0xc
+   1002e:	0000                	c.unimp
+   10030:	000d                	c.addi	x0,3
+   10032:	0000                	c.unimp
+   10034:	000e                	c.slli	x0,0x3
+   10036:	0000                	c.unimp
+   10038:	0000000f          	fence	unknown,unknown
+
+0001003c <_y>:
+   1003c:	000c                	.2byte	0xc
+   1003e:	0000                	c.unimp
+   10040:	0000009b          	.4byte	0x9b
+   10044:	0100                	c.addi4spn	x8,x2,128
+   10046:	0000                	c.unimp
+   10048:	0400                	c.addi4spn	x8,x2,512
+   1004a:	0000                	c.unimp
+   1004c:	ffb4                	c.fsw	f13,120(x15)
+   1004e:	ffff                	.2byte	0xffff
