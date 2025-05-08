@@ -17,6 +17,10 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
     
     logic[XLEN-1:0] pc_data;
     logic[ADDR_LEN-1:0] pc_addr;
+    logic en_a;
+    logic en_b;
+    assign en_a = 1; // need for xilinx to create bram (pc_out)
+    assign en_b = 0; // need for xilinx to create bram (pc_in)
 
     logic[ADDR_LEN-1:0] dram_addr;
     logic[XLEN-1:0] dram_data_out;
@@ -45,6 +49,8 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .clk(clk),
         .rst(rst),
 
+        .en_a(en_a),
+        .en_b(en_b),
         .data_out_a(pc_data),
         .addr_a(pc_addr)
     );

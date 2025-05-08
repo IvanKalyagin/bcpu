@@ -103,6 +103,9 @@ module alu
 
     //Logic ops put through the adder carry chain to reduce resources
     always_comb begin
+        add_sub_result = '0;
+        adder_in1 = '0;
+        adder_in2 = '0;
         if (!rst) begin
             case (alu_logic_op)
                 ALU_LOGIC_XOR : begin 
@@ -153,6 +156,7 @@ module alu
     end
 
     always_comb begin
+        result = '0;
         if (logic_op) begin
             case (cmd)
                 3'b001 : begin // SLL

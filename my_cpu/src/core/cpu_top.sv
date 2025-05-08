@@ -14,8 +14,6 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         output logic             s_req_o,
         output logic[XLEN-1:0] dram_data_out,
         input logic[XLEN-1:0] dram_data_in
-
-            // TODO load store support
         );
 
     logic [1:0] thread_timer_data;
@@ -50,7 +48,7 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
     logic sub_o;
     logic sra_cmd_o;
 
-    logic[ADDR_LEN-1:0] curr_pc_o;
+    logic[ADDR_LEN-3:0] curr_pc_o;
 
     logic[XLEN-1:0] data_o;
 
@@ -169,7 +167,7 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .sub(sub_o),
         .sra_cmd(sra_cmd_o),
 
-        .curr_pc(curr_pc_o),
+        .curr_pc(curr_pc_o), // TODO diff length here and in module
 
         .data(data_o),
 

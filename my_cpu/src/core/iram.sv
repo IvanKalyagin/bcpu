@@ -13,7 +13,8 @@ module iram
         input logic rst,
 
         input logic[ADDR_LEN-1:0] addr_a,
-        // input logic en_a,
+        input logic en_a,
+        input logic en_b,
         output logic [XLEN-1:0] data_out_a
     );
 
@@ -27,9 +28,12 @@ module iram
     end
 
     always_ff @ (posedge clk) begin
-        // if (en_a) begin
+        if (en_a) begin
             data_out_a <= tag_entry[addr_a];
-        // end
+        end
+        if (en_b) begin
+            tag_entry[addr_a] <= '0;
+        end
     end
 
 endmodule

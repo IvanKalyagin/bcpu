@@ -40,7 +40,7 @@ module idu
     output logic sra_cmd_o,
     output logic[XLEN/8-1:0] ls_size_o,
 
-    output logic[ADDR_LEN-1:0] curr_pc_o,
+    output logic[ADDR_LEN-3:0] curr_pc_o,
 
     output logic[XLEN-1:0] data_o,
 
@@ -101,6 +101,7 @@ always_comb begin
     ls_size = 0;
     logic_op = 1'b0;
     illegal_inst = 1'b0;
+    curr_data = '0;
 
     case (cmd)
         5'b11011 : begin // JAL
@@ -477,7 +478,7 @@ end
 
 always_ff @(posedge clk) begin
     if (!rst) begin
-        curr_pc_o <= curr_pc;
+        curr_pc_o <= curr_pc[ADDR_LEN-3:0];
     end
 end
 

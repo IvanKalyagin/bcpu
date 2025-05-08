@@ -30,39 +30,40 @@ module wb
 
 always_comb begin
     res_en = rd_en;
+    result = '0;
     if (alu_res_en) begin
-        result <= alu_res;
-        rd_addr_o <= rd_addr;
+        result = alu_res;
+        rd_addr_o = rd_addr;
     end else if (lsu_res_en) begin
         case (cmd)
             3'b000 : begin // LB
-                result <= signed'(lsu_res[7:0]);
+                result = signed'(lsu_res[7:0]);
             end
 
             3'b001 : begin // LH
-                result <= signed'(lsu_res[15:0]);
+                result = signed'(lsu_res[15:0]);
             end
 
             3'b010 : begin // LW
-                result <= lsu_res;
+                result = lsu_res;
             end
 
             3'b100 : begin // LBU
-                result <= {24'b0,lsu_res[7:0]};
+                result = {24'b0,lsu_res[7:0]};
             end
 
             3'b101 : begin // LHU
-                result <= {16'b0,lsu_res[15:0]};
+                result = {16'b0,lsu_res[15:0]};
             end
 
             default : begin
 
             end
         endcase
-        rd_addr_o <= rd_addr;
+        rd_addr_o = rd_addr;
     end else begin
-        result <= '0;
-        rd_addr_o <= '0;
+        result = '0;
+        rd_addr_o = '0;
     end
 end
 
