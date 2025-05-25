@@ -2,7 +2,7 @@
 
 
 module idu
-    import cpu_config::*;
+    
     import riscv_types::*;
     import cpu_types::*;
     (
@@ -102,6 +102,7 @@ always_comb begin
     logic_op = 1'b0;
     illegal_inst = 1'b0;
     curr_data = '0;
+    alu_logic_op = ALU_LOGIC_ADD;
 
     case (cmd)
         5'b11011 : begin // JAL
@@ -361,7 +362,8 @@ always_comb begin
                     uses_rd  = 1'b1;
                     curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
-                    ls_size = 4'b0001;
+                    ls_size = 4'b0000; 
+                    // ls_size = 4'b0001;
                 end
 
                 3'b001 : begin // LH
@@ -369,7 +371,8 @@ always_comb begin
                     uses_rd  = 1'b1;
                     curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
-                    ls_size = 4'b0011;
+                    ls_size = 4'b0000; 
+                    // ls_size = 4'b0011;
                 end
 
                 3'b010 : begin // LW
@@ -377,7 +380,8 @@ always_comb begin
                     uses_rd  = 1'b1;
                     curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
-                    ls_size = 4'b1111;
+                    ls_size = 4'b0000; 
+                    // ls_size = 4'b1111;
                 end
 
                 3'b100 : begin // LBU
@@ -385,7 +389,8 @@ always_comb begin
                     uses_rd  = 1'b1;
                     curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
-                    ls_size = 4'b0001;
+                    ls_size = 4'b0000; 
+                    // ls_size = 4'b0001;
                 end
 
                 3'b101 : begin // LHU
@@ -393,7 +398,8 @@ always_comb begin
                     uses_rd  = 1'b1;
                     curr_data = {signed'(pc2decode[31:20])};
                     alu_logic_op = ALU_LOGIC_ADD;
-                    ls_size = 4'b0011;
+                    ls_size = 4'b0000;
+                    // ls_size = 4'b0011;
                 end
 
                 default : illegal_inst = 1'b1;

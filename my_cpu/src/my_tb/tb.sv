@@ -1,5 +1,5 @@
 
-import cpu_config::*, riscv_types::*, cpu_types::*;
+import riscv_types::*, cpu_types::*;
 module tb #(parameter HEX_FILE="") ();
    logic sys_clk; 
    logic ext_reset;
@@ -23,7 +23,7 @@ module tb #(parameter HEX_FILE="") ();
   begin
 	  ext_reset <= 1;
 	for(int i=0; i< 5; i++)      
-	  @(negedge sys_clk);
+	  @(posedge sys_clk);
 	    ext_reset <= 0;     
   end
 

@@ -1,6 +1,6 @@
 
 module bcpu 
-import cpu_config::*, riscv_types::*, cpu_types::*;
+import riscv_types::*, cpu_types::*;
 (
         input logic clk,
         input logic rst,
@@ -167,7 +167,7 @@ import cpu_config::*, riscv_types::*, cpu_types::*;
         .sub(sub_o),
         .sra_cmd(sra_cmd_o),
 
-        .curr_pc(curr_pc_o), // TODO diff length here and in module
+        .curr_pc(curr_pc_o),
 
         .data(data_o),
 

@@ -8,7 +8,6 @@ vmap work rtl_work
 set HEX_FILE $1
 set DATA_FILE $2
 
-vlog -sv -svinputport=net -work work +incdir+lib {lib/cpu_config.sv}
 vlog -sv -svinputport=net -work work +incdir+lib {lib/riscv_types.sv}
 vlog -sv -svinputport=net -work work +incdir+lib {lib/cpu_types.sv}
 vlog -sv -svinputport=net -work work +incdir+core/pipeline {core/pipeline/alu.sv}

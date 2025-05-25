@@ -5,7 +5,7 @@
 
 
 module ifu
-    import cpu_config::*;
+    
     import riscv_types::*;
     import cpu_types::*;
     (

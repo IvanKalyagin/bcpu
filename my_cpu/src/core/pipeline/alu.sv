@@ -3,7 +3,7 @@
 
 
 module alu 
-    import cpu_config::*;
+    
     import riscv_types::*;
     import cpu_types::*;
     (
@@ -132,13 +132,10 @@ module alu
                     end else begin
                         add_sub_result = {1'b0, adder_in1} + {1'b0, adder_in2};
                     end
-                    // adder_in2 = alu_inputs.in2 ^ {33{alu_inputs.subtract}};
                 end
             endcase
         end
     end
-
-    // assign {add_sub_result, add_sub_carry_in} = {adder_in1, alu_inputs.subtract} + {adder_in2, alu_inputs.subtract};
 
     always_comb begin
         main_sum_pos_ovflw = ~adder_in1[XLEN-1]
@@ -213,20 +210,6 @@ module alu
         endcase
     end
 
-    // barrel_shifter shifter (
-    //         .shifter_input(alu_inputs.shifter_in),
-    //         .shift_amount(alu_inputs.shift_amount),
-    //         .arith(alu_inputs.arith),
-    //         .lshift(alu_inputs.lshift),
-    //         .shifted_result(shift_result)
-    //     );
-
-    // always_comb begin
-    //     result = (alu_inputs.shifter_path ? shift_result : add_sub_result[31:0]);
-    //     result[31:1] &= {31{~alu_inputs.slt_path}};
-    //     result[0] = alu_inputs.slt_path ? add_sub_result[XLEN] : result[0];
-    // end
-
     always_comb begin
         if (b_req) begin
             case (cmd)
@@ -234,7 +217,7 @@ module alu
                     if (main_sum_flag_z) begin
                         inc_pc = curr_pc + data;
                     end else begin
-                        inc_pc = curr_pc + 'd4; // TODO fix d1 to d4
+                        inc_pc = curr_pc + 'd4; 
                     end
                 end
 
@@ -308,7 +291,5 @@ module alu
             lsu_res_en <= l_req;
         end
     end
-    ////////////////////////////////////////////////////
-    //Assertions
 
 endmodule
